@@ -9,22 +9,17 @@ import java.util.Properties;
 /**
  * Created by Piotr on 07.04.2016.
  */
-public class Mapa {
-
-    public Mapa(){
-        properties = new Properties();
-    }
+public class Mapa extends Properties {
 
     public void parsing(String fileName) throws IOException {
-        properties.load((Reader) new FileReader(fileName));
+        load((Reader) new FileReader(fileName));
     }
-    public void listProperties(){
-        properties.list(System.out);
+    public int getNumberOfEnemies(){
+        return Integer.parseInt(getProperty("numberOfEnemies"));
     }
 
     public String getBackground(){
-        return properties.getProperty("tlo");
+        return getProperty("background");
     }
-    protected Properties properties;
 
 }

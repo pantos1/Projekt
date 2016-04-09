@@ -1,6 +1,7 @@
 package projekt;
 
 import java.awt.*;
+import javax.swing.*;
 import java.io.IOException;
 
 /**
@@ -19,8 +20,13 @@ public class Test {
                 }
                 MapaFrame frame = new MapaFrame();
                 MapaPanel main = new MapaPanel(_1.getBackground());
+                Przeciwnik[] przeciwnik = new Przeciwnik[3];
+                int i;
+                for(i=0; i<_1.getNumberOfEnemies(); i++){
+                    przeciwnik[i] = new Przeciwnik(100*i, 100*i, "img/janusz.png");
+                    main.add(new JLabel(przeciwnik[i].getIcon()));
+                }
                 frame.getContentPane().add(main);
-                frame.setMaximumSize(main.getMaximumSize());
                 frame.pack();
                 frame.setVisible(true);
             }
