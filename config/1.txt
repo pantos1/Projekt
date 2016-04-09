@@ -1,0 +1,3 @@
+liczbaPrzeciwnikow=3
+czasTrwania=100
+tlo=img/background.jpg
