@@ -12,11 +12,6 @@ public class MenuPanel extends JPanel implements ActionListener{
 
     public MenuPanel (String img){
         this.img=new ImageIcon(img).getImage();
-        Dimension size = new Dimension(this.img.getWidth(null), this.img.getHeight(null));
-        setPreferredSize(size);
-        setMaximumSize(size);
-        setMinimumSize(size);
-        setSize(size);
 
         JPanel menu = new JPanel(new GridLayout(2,3));
         JPanel emp1 = new JPanel();
@@ -58,6 +53,7 @@ public class MenuPanel extends JPanel implements ActionListener{
 
         //menu.setBackground(Color.yellow);
         menu.setOpaque(false);
+        but.setOpaque(false);
         emp1.setOpaque(false);
         emp2.setOpaque(false);
         emp3.setOpaque(false);

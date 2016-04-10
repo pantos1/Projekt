@@ -14,10 +14,19 @@ public class Gracz{
     public Gracz(String name, String fileName){
         this.name = name;
         icon = new ImageIcon(fileName);
+        hp = 100;
     }
 
     public ImageIcon getIcon(){
         return icon;
+    }
+
+    public int getHP(){
+        return hp;
+    }
+
+    public String getName(){
+        return name;
     }
 
     private double x;
@@ -31,6 +40,7 @@ public class Gracz{
 
     private String name;
     private double score;
+    private int hp;
 
     private boolean left;
     private boolean right;

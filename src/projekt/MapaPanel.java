@@ -18,6 +18,16 @@ public class MapaPanel extends JPanel{
         setMinimumSize(size);
         setMaximumSize(size);
         setSize(size);
+
+        imie = new JLabel(gracz.getName());
+        imie.setFont(new Font("Verdana",1,16));
+        add(imie, BorderLayout.LINE_START);
+
+        hp = new JLabel("HP:"+String.valueOf(gracz.getHP()));
+        hp.setFont(new Font("Verdana",1,16));
+        add(hp, BorderLayout.LINE_START);
+
+
         int i;
         for(i=0; i<mapa.getNumberOfEnemies(); i++){
             przeciwnicy.add(new Przeciwnik(100*i, 100*i, "img/janusz.png"));
@@ -44,6 +54,9 @@ public class MapaPanel extends JPanel{
         drawEnemies(g);
         drawPlayer(g);
     }
+
+    private JLabel hp;
+    private JLabel imie;
     private Gracz gracz;
     private Image img;
     private ArrayList <Przeciwnik> przeciwnicy;

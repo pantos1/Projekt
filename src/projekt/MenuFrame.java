@@ -13,7 +13,6 @@ public class MenuFrame extends JFrame{
     public MenuFrame() {
         super("Władek Invaders");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         setResizable(false);
         setLocation(145, 110);
     }

@@ -25,6 +25,7 @@ public class Przeciwnik extends Properties {
     public ImageIcon getIcon(){
         return icon;
     }
+
     public int getX(){
         return x;
     }
