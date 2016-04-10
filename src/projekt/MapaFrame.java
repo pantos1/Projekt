@@ -9,5 +9,6 @@ public class MapaFrame extends JFrame {
     public MapaFrame(){
         super("Władek Invaders");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
     }
 }

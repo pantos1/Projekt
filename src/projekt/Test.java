@@ -1,34 +1,21 @@
 package projekt;
-
-import java.awt.*;
-import javax.swing.*;
-import java.io.IOException;
+import java.awt.EventQueue;
 
 /**
- * Created by Piotr on 07.04.2016.
+ * Created by Kuba on 2016-04-04.
  */
+
 public class Test {
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Mapa _1= new Mapa();
-                try {
-                    _1.parsing("config/1.txt");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                MapaFrame frame = new MapaFrame();
-                MapaPanel main = new MapaPanel(_1.getBackground());
-                Przeciwnik[] przeciwnik = new Przeciwnik[3];
-                int i;
-                for(i=0; i<_1.getNumberOfEnemies(); i++){
-                    przeciwnik[i] = new Przeciwnik(100*i, 100*i, "img/janusz.png");
-                    main.add(new JLabel(przeciwnik[i].getIcon()));
-                }
-                frame.getContentPane().add(main);
+                MenuFrame frame=new MenuFrame();
+                MenuPanel menu = new MenuPanel("src/plaza.jpg");
+                frame.add(menu);
                 frame.pack();
                 frame.setVisible(true);
+
             }
         });
     }

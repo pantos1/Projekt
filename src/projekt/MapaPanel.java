@@ -15,6 +15,7 @@ public class MapaPanel extends JPanel{
         setMinimumSize(size);
         setMaximumSize(size);
         setSize(size);
+        setLayout(new BorderLayout());
     }
 
     public void paintComponent(Graphics g){
