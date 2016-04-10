@@ -6,9 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by Piotr on 07.04.2016.
+ * Klasa pełniąca funkcję inicjalizującą grę, tworzy nowy wątek. W tym wątku tworzy obiekt klasy Mapa na podstawie pliku konfiguracyjnego oraz
+ * obiekt klasy Gracz na podstawie podanego imienia. Tworzy również okno gry, tworząc obiekty klasy MapaFrame oraz MapaPanel.
  */
 public class Test2 {
+    /**
+     * Konstruktor obiektu klsay Test2.
+     * @param name Imię gracza
+     */
     public Test2(String name) {
         EventQueue.invokeLater(new Runnable() {
             @Override
