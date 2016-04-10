@@ -11,22 +11,29 @@ import java.util.Properties;
 /**
  * Created by Piotr on 09.04.2016.
  */
-public class Przeciwnik extends JLabel {
+public class Przeciwnik extends Properties {
 
     public Przeciwnik(int x, int y, String fileName){
-        point = new Point(x, y);
-        this.setLocation(point);
+        this.x = x;
+        this.y = y;
         icon = new ImageIcon(fileName);
     }
 
     public void parsing(String fileName) throws IOException {
-        properties.load((Reader) new FileReader(fileName));
+        load((Reader) new FileReader(fileName));
     }
     public ImageIcon getIcon(){
         return icon;
     }
+    public int getX(){
+        return x;
+    }
 
-    protected Properties properties;
-    protected Point point;
+    public int getY(){
+        return y;
+    }
+
+    protected int x;
+    protected int y;
     protected ImageIcon icon;
 }

@@ -11,7 +11,7 @@ public class Test {
             @Override
             public void run() {
                 MenuFrame frame=new MenuFrame();
-                MenuPanel menu = new MenuPanel("src/plaza.jpg");
+                MenuPanel menu = new MenuPanel("img/background.jpg");
                 frame.add(menu);
                 frame.pack();
                 frame.setVisible(true);
