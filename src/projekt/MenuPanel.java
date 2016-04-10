@@ -8,8 +8,21 @@ import java.awt.event.ActionListener;
 /**
  * Created by Kuba on 2016-04-10.
  */
+ 
+ /**
+ * Klasa MenuPanel dziedziczy po klasie JPanel oraz implementuje interfejs ActionListener slużący do
+ * nasłuchiwania akcji ze strony użytkownika. Klasa ta odpowiada za właściwe menu gry.
+ */
 public class MenuPanel extends JPanel implements ActionListener{
-
+/**
+     * W konstruktorze klasy MenuPanel tworzone są poszczególne panele odpowiadające za wygląd menu gry.
+     * @param img - plik ze zdjęciem, które zostanie ustawione jako tło menu
+     * Najpierw tworzony jest panel menu z parametrem GridLayout. To on odpowiada za to jak rozłożone są
+     * wszystkie elementy. Innym ważnym panelem jest panel title, w którym wpisany jest tytuł gry (jako
+     * obiekt klasy JLabel), a także but, do którego dodane są kolejne buttony.
+     * Przezroczystość wszystkich paneli ustawiona jest jako false, żebywidoczny był obrazek mający być
+     * tłem menu.
+     */
     public MenuPanel (String img){
         this.img=new ImageIcon(img).getImage();
 
@@ -61,12 +74,21 @@ public class MenuPanel extends JPanel implements ActionListener{
         title.setOpaque(false);
 
 }
+   /**
+     * Funkcja rysująca, jej zadaniem jest ustawienie obrazka przedstawiającego plażę jako tło menu.
+     * @param g - obiekt klasy JComponent służący do pobierania grafiki bezpośrednio z pliku
+     */
 
     public void paintComponent(Graphics g){
         g.drawImage(img, 0, 0, null);
     }
 private Image img;
-
+/**
+     * Przeciążenie metody actionPerformed umożliwia zdefiniowanie akcji, która nastąpi po naciśnięciu
+     * na przycisk b1 - "Nowa Gra". Wyskakuje wtedy okienko dialogowe z prośbą o podanie imienia gracza,
+     * a po zatwierdzeniu przechodzi do pierwszej planszy gry.
+     * @param e - określa zdarzenie, które nastąpiło
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         JOptionPane d=new JOptionPane(null);
