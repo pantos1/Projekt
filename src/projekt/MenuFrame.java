@@ -15,8 +15,7 @@ import javax.swing.*;
 public class MenuFrame extends JFrame{
 
     /**
-     * Konstruktor klasy MenuFrame określający sposób zamknięcia ramki i jej lokalizację początkową
-     * oraz uniemożliwiający zmianę kształtu ramki.
+     * Konstruktor klasy MenuFrame w którym tworzony jest również obiekt klasy MenuPanel.
      */
      
     public MenuFrame() {
@@ -24,6 +23,9 @@ public class MenuFrame extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocation(145, 110);
+        MenuPanel menu = new MenuPanel("img/background.jpg");
+        add(menu);
+        pack();
     }
 
 }
