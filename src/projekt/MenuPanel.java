@@ -4,12 +4,26 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 /**
  * Created by Kuba on 2016-04-10.
  */
-public class MenuPanel extends JPanel implements ActionListener{
 
+/**
+ * Klasa MenuPanel dziedziczy po klasie JPanel oraz implementuje interfejs ActionListener slużący do
+ * nasłuchiwania akcji ze strony użytkownika. Klasa ta odpowiada za właściwe menu gry.
+ */
+public class MenuPanel extends JPanel implements ActionListener{
+    /**
+     * W konstruktorze klasy MenuPanel tworzone są poszczególne panele odpowiadające za wygląd menu gry.
+     * @param img - plik ze zdjęciem, które zostanie ustawione jako tło menu
+     * Najpierw tworzony jest panel menu z parametrem GridLayout. To on odpowiada za to jak rozłożone są
+     * wszystkie elementy. Innym ważnym panelem jest panel title, w którym wpisany jest tytuł gry (jako
+     * obiekt klasy JLabel), a także but, do którego dodane są kolejne buttony.
+     * Przezroczystość wszystkich paneli ustawiona jest jako false, żebywidoczny był obrazek mający być
+     * tłem menu.
+     */
     public MenuPanel (String img){
         this.img=new ImageIcon(img).getImage();
 
@@ -60,23 +74,45 @@ public class MenuPanel extends JPanel implements ActionListener{
         emp4.setOpaque(false);
         title.setOpaque(false);
 
-}
+    }
+    /**
+     * Funkcja inicjalizującą grę, tworzy nowy wątek. W tym wątku tworzy obiekt klasy Mapa na podstawie pliku konfiguracyjnego oraz
+     * obiekt klasy Gracz na podstawie podanego imienia. Tworzy również okno gry, tworząc obiekty klasy MapaFrame.
+     */
+    protected void initGame(String name) {
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                MapaFrame frame = new MapaFrame(name);
+                frame.setVisible(true);
+            }
+        });
+    }
+    /**
+     * Funkcja rysująca, jej zadaniem jest ustawienie obrazka przedstawiającego plażę jako tło menu.
+     * @param g - obiekt klasy JComponent służący do pobierania grafiki bezpośrednio z pliku
+     */
 
     public void paintComponent(Graphics g){
         g.drawImage(img, 0, 0, null);
     }
-private Image img;
-
+    private Image img;
+    /**
+     * Przeciążenie metody actionPerformed umożliwia zdefiniowanie akcji, która nastąpi po naciśnięciu
+     * na przycisk b1 - "Nowa Gra". Wyskakuje wtedy okienko dialogowe z prośbą o podanie imienia gracza,
+     * a po zatwierdzeniu przechodzi do pierwszej planszy gry.
+     * @param e - określa zdarzenie, które nastąpiło
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         JOptionPane d=new JOptionPane(null);
 
         String inputValue = JOptionPane.showInputDialog(null, "Podaj imię", "Stwórz gracza", JOptionPane.QUESTION_MESSAGE);
-        d.setSize(300, 200);
+        d.setSize(600, 400);
         d.setVisible(true);
 
         if(inputValue!=null){
-            new Test2(inputValue);
+            initGame(inputValue);
         }
     }
 }

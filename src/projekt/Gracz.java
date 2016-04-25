@@ -1,30 +1,44 @@
 package projekt;
 
 import javax.swing.*;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Properties;
+
 
 /**
  * Created by Kuba on 2016-04-09.
  */
+/**
+ * Klasa charakteryzująca gracza i określająca jego parametry.
+ */
 public class Gracz{
 
+    /**
+     * Konstruktor klasy Gracz
+     * @param name - Okresla imie gracza
+     * @param fileName - Okresla scieżka do pliku z ikon gracza.
+     */
     public Gracz(String name, String fileName){
         this.name = name;
         icon = new ImageIcon(fileName);
         hp = 100;
     }
 
+    /**
+     * Funkcja, która zwraca referencje do obiektu przechowujacego ikone gracza
+     */
+
     public ImageIcon getIcon(){
         return icon;
     }
 
+    /**
+     * Funkcja, która zwraca poziom zycia gracza
+     */
     public int getHP(){
         return hp;
     }
-
+    /**
+     * Funkcja, która zwraca imie gracza
+     */
     public String getName(){
         return name;
     }
@@ -48,10 +62,9 @@ public class Gracz{
     public Gracz(String name){
         this.name=name;
     }
-
+/*
     public void update() {
         // nowa pozycja gracza
-
         if (left) {
             x -= levelSpeed;
             if (x < -levelSpeed) {
@@ -62,7 +75,6 @@ public class Gracz{
             if (x > levelSpeed) {
                 //? x = map.width;
             }
-        }
-
-    }
+     }
+    } */
 }
