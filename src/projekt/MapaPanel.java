@@ -2,12 +2,14 @@ package projekt;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 /**
  * Klasa tworząca panel na ktorym będą rysowane obiekty gry - przeciwnicy, gracz, strzał.
  */
-public class MapaPanel extends JPanel{
+public class MapaPanel extends JPanel implements KeyListener, Runnable{
     /**
      * Konstruktor klasy, ładuje obrazek będący tłem mapy. Ustawia wymiary panelu. Tworzy i ustawia napisy z imieniem gracza i
      * liczbą punktów życia. Tworzy i dodaje do listy liczbę przeciwników zgodną z plikiem konfiguracyjnym.
@@ -35,8 +37,11 @@ public class MapaPanel extends JPanel{
 
         int i;
         for(i=0; i<mapa.getNumberOfEnemies(); i++){
-            przeciwnicy.add(new Przeciwnik(100*i, 100*i, "img/janusz.png"));
+            przeciwnicy.add(new Przeciwnik(100*i, 100*i, "img/janusz.png", this));
         }
+
+        addKeyListener(this);
+        setFocusable(true);
     }
 
     /**
@@ -48,34 +53,39 @@ public class MapaPanel extends JPanel{
     }
 
     /**
-     * Funkcja rysująca w pętli wszystkich przeciwników przechowywanych w ArrayList przeciwnicy.
-     * @param g Kontekst graficzny
-     */
-    public void drawEnemies(Graphics g){
-        int i;
-        for(i=0;i<przeciwnicy.size();i++){
-            g.drawImage(przeciwnicy.get(i).getIcon().getImage(),przeciwnicy.get(i).getX(),przeciwnicy.get(i).getY(),null);
-        }
-    }
-
-    /**
-     * Funkcja rysująca postać gracza.
-     * @param g Kontekst graficzny.
-     */
-    public void drawPlayer (Graphics g){
-        g.drawImage(gracz.getIcon().getImage(),500,750,null);
-    }
-
-    /**
-     * Przeciążona metoda paint, wywołująca metody drawPlayer oraz drawEnemies.
+     * Przeciążona metoda paint, rysująca gracza oraz przeciwników.
      * @param g Kontekst graficzny.
      */
     public void paint(Graphics g){
         super.paint(g);
-        drawEnemies(g);
-        drawPlayer(g);
+        int i;
+        for(i=0;i<przeciwnicy.size();i++){
+            przeciwnicy.get(i).draw(g);
+        }
+        gracz.draw(g);
     }
 
+    @Override
+    public void keyPressed(KeyEvent evt){
+        if (evt.getKeyCode() == KeyEvent.VK_LEFT){
+            gracz.left=true;
+        }
+        else if (evt.getKeyCode() == KeyEvent.VK_RIGHT){
+            gracz.right=true;
+        }
+    };
+
+    @Override
+    public void keyReleased(KeyEvent evt) {
+        if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
+            gracz.left = false;
+        } else if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
+            gracz.right = false;
+        }
+    }
+    @Override
+    public void keyTyped(KeyEvent evt){
+    }
     /**
      * Obiekt klasy JLabel przechowujący liczbę punktów życia.
      */
@@ -96,4 +106,21 @@ public class MapaPanel extends JPanel{
      * Lista przechowująca wszystkie obiekty klasy Przeciwnik dla danego poziomu.
      */
     private ArrayList <Przeciwnik> przeciwnicy;
+
+    @Override
+    public void run() {
+        while(true){
+            repaint();
+            gracz.move();
+            int i;
+            for(i=0;i<przeciwnicy.size();i++){
+                przeciwnicy.get(i).move();
+            }
+            try{
+                Thread.sleep(10);
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+    }
 }

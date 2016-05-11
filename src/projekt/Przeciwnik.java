@@ -11,7 +11,7 @@ import java.util.Properties;
 /**
  * Klasa przechowująca dane o przeciwnikach
  */
-public class Przeciwnik{
+public class Przeciwnik implements Runnable{
 
     /**
      * Konstruktor klasy Przeciwnik
@@ -19,20 +19,42 @@ public class Przeciwnik{
      * @param y Początkowe położenie w kierunku y
      * @param fileName Scieżka dostępu do pliku przechowującego ikonę przeciwnika.
      */
-    public Przeciwnik(int x, int y, String fileName){
+    public Przeciwnik(int x, int y, String fileName, MapaPanel panel){
         this.x = x;
         this.y = y;
         icon = new ImageIcon(fileName);
+        width=icon.getIconWidth();
+        height=icon.getIconHeight();
+        this.panel = panel;
     }
-
     /**
-     * Funkcja zwracająca referencję do obiektu icon klasy ImageIcon przechowującego ikonę obiektu.
-     * @return
+     * Funkcja rysująca przeciwnika.
+     * @param g Kontekst graficzny
      */
-    public ImageIcon getIcon(){
-        return icon;
+    public void draw(Graphics g){
+        g.drawImage(icon.getImage(),x,y,null);
+    }
+    public void move(){
+        if(x<0){
+            xDirection=1;
+        }
+        else if(x+width>panel.getWidth()) {
+            xDirection=-1;
+        }
+        x+=xDirection*dx;
     }
 
+    @Override
+    public void run() {
+        while(true){
+            move();
+            try{
+                Thread.sleep(10);
+            }catch(InterruptedException ie){
+                ie.printStackTrace();
+            }
+        }
+    }
     /**
      * Funkcja zwracająca współrzędną x położenia obiektu.
      * @return
@@ -61,4 +83,9 @@ public class Przeciwnik{
      * Pole przechowujace obiekt icon klasy ImageIcon zawierającej ikonę obiektu Przeciwnik.
      */
     protected ImageIcon icon;
+    protected int width;
+    protected int height;
+    protected int dx=5;
+    protected int xDirection=1;
+    protected MapaPanel panel;
 }

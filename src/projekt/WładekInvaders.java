@@ -1,4 +1,5 @@
 package projekt;
+import javax.swing.*;
 import java.awt.EventQueue;
 
 /**
@@ -10,7 +11,7 @@ import java.awt.EventQueue;
  */
 public class WładekInvaders {
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 MenuFrame frame=new MenuFrame();
