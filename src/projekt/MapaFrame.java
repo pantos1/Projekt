@@ -24,5 +24,6 @@ public class MapaFrame extends JFrame {
         MapaPanel main = new MapaPanel(_1, gracz);
         add(main);
         pack();
+        new Thread(main).start();
     }
 }

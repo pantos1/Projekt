@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by Kuba on 2016-04-10.
@@ -80,12 +81,12 @@ public class MenuPanel extends JPanel implements ActionListener{
      * obiekt klasy Gracz na podstawie podanego imienia. Tworzy również okno gry, tworząc obiekty klasy MapaFrame.
      */
     protected void initGame(String name) {
-        EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 MapaFrame frame = new MapaFrame(name);
                 frame.setVisible(true);
-            }
+                }
         });
     }
     /**
@@ -105,13 +106,13 @@ public class MenuPanel extends JPanel implements ActionListener{
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        JOptionPane d=new JOptionPane(null);
+        JOptionPane d = new JOptionPane(null);
 
         String inputValue = JOptionPane.showInputDialog(null, "Podaj imię", "Stwórz gracza", JOptionPane.QUESTION_MESSAGE);
         d.setSize(600, 400);
         d.setVisible(true);
 
-        if(inputValue!=null){
+        if (inputValue != null) {
             initGame(inputValue);
         }
     }
