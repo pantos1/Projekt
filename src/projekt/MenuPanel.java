@@ -32,9 +32,9 @@ public class MenuPanel extends JPanel implements ActionListener{
     }
     
     private Desktop desktop;
-    private String pathwyniki = "C:\\Users\\Kuba\\IdeaProjects\\Projekt_PROZE\\wyniki.txt";
-    private String pathzasady = "C:\\Users\\Kuba\\IdeaProjects\\Projekt_PROZE\\zasady.txt";
-    private String pathautorzy = "C:\\Users\\Kuba\\IdeaProjects\\Projekt_PROZE\\autorzy.txt";
+    private String pathwyniki = "txt/wyniki.txt";
+    private String pathzasady = "txt/zasady.txt";
+    private String pathautorzy = "txt/autorzy.txt";
     
     public MenuPanel (String img){
         desktop = Desktop.getDesktop();
@@ -148,7 +148,7 @@ public class MenuPanel extends JPanel implements ActionListener{
             d.setSize(300, 200);
             d.setVisible(true);
             if (inputValue != null) {
-
+                initGame(inputValue);
             }
         }
         if (e.getActionCommand() == Actions.b2.name()) {
@@ -166,7 +166,7 @@ public class MenuPanel extends JPanel implements ActionListener{
             }
         }
         if (e.getActionCommand() == Actions.b4.name()) {
-            music();
+            //music();
         }
 
         if (e.getActionCommand() == Actions.b5.name()) {
@@ -185,10 +185,8 @@ public class MenuPanel extends JPanel implements ActionListener{
                     null, options, options[0]);
             if (d1 == JOptionPane.YES_OPTION) {
                 System.exit(0);
-                if (d1 == JOptionPane.NO_OPTION) {
-                    remove(d1);
-                }
-
+            }
+            else if (d1 == JOptionPane.NO_OPTION) {
             }
         }
     }

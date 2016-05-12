@@ -14,10 +14,10 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      * Konstruktor klasy, ładuje obrazek będący tłem mapy. Ustawia wymiary panelu. Tworzy i ustawia napisy z imieniem gracza i
      * liczbą punktów życia. Tworzy i dodaje do listy liczbę przeciwników zgodną z plikiem konfiguracyjnym.
      * @param mapa Obiekt klasy Mapa która jest obecnie załadowana.
-     * @param gracz Obiekt klasy Gracz który obecnie uczestniczy w grze.
+     * @param name Imię gracza do przekazania do konstruktora obiektu klasy Gracz
      */
-    public MapaPanel(Mapa mapa, Gracz gracz){
-        this.gracz = gracz;
+    public MapaPanel(Mapa mapa, String name, MapaFrame frame){
+        this.frame = frame;
         img = new ImageIcon(mapa.getBackground()).getImage();
         przeciwnicy = new ArrayList<Przeciwnik>();
         Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
@@ -26,7 +26,9 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         setMaximumSize(size);
         setSize(size);
 
-        imie = new JLabel(gracz.getName());
+        gracz = new Gracz(name, "img/gracz.png", this);
+
+        imie = new JLabel(name);
         imie.setFont(new Font("Verdana",1,16));
         add(imie, BorderLayout.LINE_START);
 
@@ -34,20 +36,22 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         hp.setFont(new Font("Verdana",1,16));
         add(hp, BorderLayout.LINE_START);
 
-
         int i;
         for(i=0; i<mapa.getNumberOfEnemies(); i++){
-            przeciwnicy.add(new Przeciwnik(100*i, 100*i, "img/janusz.png", this));
+            przeciwnicy.add(new Przeciwnik("img/janusz.png", this));
+            przeciwnicy.get(i).startLocationUpdateThread();
         }
 
         addKeyListener(this);
         setFocusable(true);
+        gracz.startLocationUpdateThread();
     }
 
     /**
      * Przeciążona metoda paintComponent rysująca obrazek <i>img</i> w tle.
      * @param g Kontekst graficzny
      */
+    @Override
     public void paintComponent(Graphics g){
         g.drawImage(img,0,0, null);
     }
@@ -56,6 +60,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      * Przeciążona metoda paint, rysująca gracza oraz przeciwników.
      * @param g Kontekst graficzny.
      */
+    @Override
     public void paint(Graphics g){
         super.paint(g);
         int i;
@@ -106,21 +111,48 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      * Lista przechowująca wszystkie obiekty klasy Przeciwnik dla danego poziomu.
      */
     private ArrayList <Przeciwnik> przeciwnicy;
+    Thread kicker = null;
+    private MapaFrame frame;
 
     @Override
     public void run() {
-        while(true){
+        while(kicker == Thread.currentThread()){
             repaint();
-            gracz.move();
-            int i;
-            for(i=0;i<przeciwnicy.size();i++){
-                przeciwnicy.get(i).move();
-            }
             try{
                 Thread.sleep(10);
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
+        }
+    }
+
+    void startAnimationThread(){
+        (kicker = new Thread(this)).start();
+        gracz.startLocationUpdateThread();
+        int i;
+        for(i=0;i<przeciwnicy.size();i++){
+            przeciwnicy.get(i).startLocationUpdateThread();
+        }
+    }
+
+    void stopAnimationThread(){
+        kicker = null;
+        gracz.stopLocationUpdateThread();
+        int i;
+        for(i=0;i<przeciwnicy.size();i++){
+            przeciwnicy.get(i).stopLocationUpdateThread();
+        }
+    }
+    void gameOver(){
+        stopAnimationThread();
+        String[] options = new String[] {"Tak", "Nie"};
+        int d = JOptionPane.showOptionDialog(this, "Czy chcesz zagrać jeszcze raz?", "Koniec gry",
+                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+        if (d == JOptionPane.NO_OPTION){
+            System.exit(0);
+        }
+        else if (d == JOptionPane.YES_OPTION){
+            frame.newGame(gracz.getName());
         }
     }
 }

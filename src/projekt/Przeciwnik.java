@@ -15,38 +15,40 @@ public class Przeciwnik implements Runnable{
 
     /**
      * Konstruktor klasy Przeciwnik
-     * @param x Początkowe położenie w kierunku x
-     * @param y Początkowe położenie w kierunku y
      * @param fileName Scieżka dostępu do pliku przechowującego ikonę przeciwnika.
+     * @param panel Referencja na obiekt klasy MapaPanel, który przechowuje obiekt klasy Przeciwnik.
      */
-    public Przeciwnik(int x, int y, String fileName, MapaPanel panel){
-        this.x = x;
-        this.y = y;
+    public Przeciwnik(String fileName, MapaPanel panel){
+        x = (int) (Math.random() * panel.getWidth());
+        y = (int) (Math.random() * panel.getHeight()/3);
         icon = new ImageIcon(fileName);
-        width=icon.getIconWidth();
-        height=icon.getIconHeight();
         this.panel = panel;
     }
     /**
      * Funkcja rysująca przeciwnika.
      * @param g Kontekst graficzny
      */
-    public void draw(Graphics g){
+    void draw(Graphics g){
         g.drawImage(icon.getImage(),x,y,null);
     }
-    public void move(){
-        if(x<0){
+    private void move(){
+        if(x<=0){
             xDirection=1;
+            y+=dy;
         }
-        else if(x+width>panel.getWidth()) {
+        else if(x+icon.getIconWidth()>panel.getWidth()) {
             xDirection=-1;
+            y+=dy;
         }
         x+=xDirection*dx;
+        if(y+icon.getIconHeight()>panel.getHeight()){
+            panel.gameOver();
+        }
     }
 
     @Override
     public void run() {
-        while(true){
+        while(kicker == Thread.currentThread()){
             move();
             try{
                 Thread.sleep(10);
@@ -55,37 +57,30 @@ public class Przeciwnik implements Runnable{
             }
         }
     }
-    /**
-     * Funkcja zwracająca współrzędną x położenia obiektu.
-     * @return
-     */
-    public int getX(){
-        return x;
+
+    void startLocationUpdateThread(){
+        (kicker = new Thread(this)).start();
     }
 
-    /**
-     * Funkcja zwracająca współrzędną y położenia obiektu.
-     * @return
-     */
-    public int getY(){
-        return y;
+    void stopLocationUpdateThread(){
+        kicker = null;
     }
 
     /**
      * Pole przechowujące współrzędną x położenia obiektu
      */
-    protected int x;
+    private int x;
     /**
      * Pole przechowujące współrzędną y położenia obiektu
      */
-    protected int y;
+    private int y;
     /**
      * Pole przechowujace obiekt icon klasy ImageIcon zawierającej ikonę obiektu Przeciwnik.
      */
-    protected ImageIcon icon;
-    protected int width;
-    protected int height;
-    protected int dx=5;
-    protected int xDirection=1;
-    protected MapaPanel panel;
+    private ImageIcon icon;
+    private int dx = 5;
+    private int dy = 20;
+    private int xDirection=1;
+    MapaPanel panel;
+    private Thread kicker;
 }

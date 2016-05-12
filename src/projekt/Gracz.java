@@ -20,11 +20,12 @@ public class Gracz implements Runnable {
      * @param name     - Okresla imie gracza
      * @param fileName - Okresla scieżka do pliku z ikon gracza.
      */
-    public Gracz(String name, String fileName) {
+    public Gracz(String name, String fileName, MapaPanel panel) {
         this.name = name;
         icon = new ImageIcon(fileName);
         hp = 100;
-        x = 500;
+        x = panel.getWidth()/2;
+        this.panel = panel;
     }
 
     /**
@@ -32,22 +33,14 @@ public class Gracz implements Runnable {
      *
      * @param g Kontekst graficzny.
      */
-    public void draw(Graphics g) {
+    void draw(Graphics g) {
         g.drawImage(icon.getImage(), x, 750, null);
-    }
-
-    /**
-     * Funkcja, która zwraca referencje do obiektu przechowujacego ikone gracza
-     */
-
-    public ImageIcon getIcon() {
-        return icon;
     }
 
     /**
      * Funkcja, która zwraca poziom zycia gracza
      */
-    public int getHP() {
+    int getHP() {
         return hp;
     }
 
@@ -58,44 +51,40 @@ public class Gracz implements Runnable {
         return name;
     }
 
-    protected int x;
-    protected int dx = 10;
+    private int x;
+    private int dx = 10;
+    private int xDirection;
+
+    MapaPanel panel;
 
     private ImageIcon icon;
 
-    private double levelSpeed;
-
-    //levelSpeed = speed*mapNumber;
+    private Thread kicker;
 
     private String name;
     private double score;
     private int hp;
 
-    protected boolean left;
-    protected boolean right;
+    boolean left;
+    boolean right;
 
     public Gracz(String name) {
         this.name = name;
     }
 
-    public void move() {
-        // nowa pozycja gracza
-        if (left) {
-            x -= dx;
-            /*if (x < -levelSpeed) {
-                x = 0;
-            }*/
-        } else if (right) {
-            x += dx;
-            /*if (x > levelSpeed) {
-                //? x = map.width;
-            }*/
+    private void move() {
+        xDirection=0;
+        if (left && x>=0) {
+            xDirection = -1;
+        } else if (right && x+icon.getIconWidth()<panel.getWidth()) {
+            xDirection = 1;
         }
+        x += xDirection*dx;
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (kicker == Thread.currentThread()) {
             move();
             try {
                 Thread.sleep(10);
@@ -103,5 +92,13 @@ public class Gracz implements Runnable {
                 ie.printStackTrace();
             }
         }
+    }
+
+    public void startLocationUpdateThread(){
+        (kicker = new Thread(this)).start();
+    }
+
+    public void stopLocationUpdateThread(){
+        kicker = null;
     }
 }

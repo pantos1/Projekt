@@ -1,6 +1,8 @@
 package projekt;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 /**
@@ -14,16 +16,31 @@ public class MapaFrame extends JFrame {
         super("Władek Invaders");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowIconified(WindowEvent e) {
+                super.windowIconified(e);
+                main.stopAnimationThread();
+            }
+            public void windowDeiconified(WindowEvent e){
+                super.windowDeiconified(e);
+                main.startAnimationThread();
+            }
+        });
+        newGame(name);
+    }
+    void newGame(String name){
         Mapa _1 = new Mapa();
-        Gracz gracz = new Gracz(name, "img/gracz.png");
         try {
             _1.parsing("config/1.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        MapaPanel main = new MapaPanel(_1, gracz);
+        main = new MapaPanel(_1, name, this);
         add(main);
         pack();
-        new Thread(main).start();
+        main.startAnimationThread();
     }
+
+    private MapaPanel main;
 }
