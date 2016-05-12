@@ -5,7 +5,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import sun.audio.*;
 
 /**
  * Created by Kuba on 2016-04-10.
@@ -25,7 +27,18 @@ public class MenuPanel extends JPanel implements ActionListener{
      * Przezroczystość wszystkich paneli ustawiona jest jako false, żebywidoczny był obrazek mający być
      * tłem menu.
      */
+     private enum Actions {
+        b1, b2, b3, b4, b5, b6
+    }
+    
+    private Desktop desktop;
+    private String pathwyniki = "C:\\Users\\Kuba\\IdeaProjects\\Projekt_PROZE\\wyniki.txt";
+    private String pathzasady = "C:\\Users\\Kuba\\IdeaProjects\\Projekt_PROZE\\zasady.txt";
+    private String pathautorzy = "C:\\Users\\Kuba\\IdeaProjects\\Projekt_PROZE\\autorzy.txt";
+    
     public MenuPanel (String img){
+        desktop = Desktop.getDesktop();
+        
         this.img=new ImageIcon(img).getImage();
 
         JPanel menu = new JPanel(new GridLayout(2,3));
@@ -50,14 +63,24 @@ public class MenuPanel extends JPanel implements ActionListener{
         title.add(jlabel);
 
         JButton b1 = new JButton("       Nowa Gra       ");
-
+        b1.setActionCommand(Actions.b1.name());
         b1.addActionListener(this);
         JButton b2 = new JButton("Najlepsze Wyniki");
+        b2.setActionCommand(Actions.b2.name());
+        b2.addActionListener(this);
         JButton b3 = new JButton("     Zasady Gry     ");
+        b3.setActionCommand(Actions.b3.name());
+        b3.addActionListener(this);
         JButton b4 = new JButton("          Opcje          ");
+        b4.setActionCommand(Actions.b4.name());
+        b4.addActionListener(this);
         JButton b5 = new JButton("        Autorzy        ");
+        b5.setActionCommand(Actions.b5.name());
+        b5.addActionListener(this);
         JButton b6 = new JButton("     Opuść Grę     ");
-
+        b6.setActionCommand(Actions.b6.name());
+        b6.addActionListener(this);
+        
         but.add(b1);
         but.add(b2);
         but.add(b3);
@@ -104,16 +127,69 @@ public class MenuPanel extends JPanel implements ActionListener{
      * a po zatwierdzeniu przechodzi do pierwszej planszy gry.
      * @param e - określa zdarzenie, które nastąpiło
      */
+        /* public static void music() {
+        AudioPlayer MGP = AudioPlayer.player;
+        AudioStream BGM;
+        AudioData MD;
+        ContinuousAudioDataStream loop = null;
+        try {
+            BGM = new AudioStream(new FileInputStream("C:\\Users\\Kuba\\IdeaProjects\\Projekt_PROZE\\audio2.wav"));
+        MD = BGM.getData();
+            loop = new ContinuousAudioDataStream(MD);
+        }catch(IOException error){JOptionPane.showMessageDialog(null, "Blad otwarcia pliku");}
+        MGP.start(loop);
+    }
+*/
     @Override
     public void actionPerformed(ActionEvent e) {
-        JOptionPane d = new JOptionPane(null);
+        if (e.getActionCommand() == Actions.b1.name()) {
+            JOptionPane d = new JOptionPane(null);
+            String inputValue = JOptionPane.showInputDialog(null, "Podaj imie", "Stwórz gracza", JOptionPane.QUESTION_MESSAGE);
+            d.setSize(300, 200);
+            d.setVisible(true);
+            if (inputValue != null) {
 
-        String inputValue = JOptionPane.showInputDialog(null, "Podaj imię", "Stwórz gracza", JOptionPane.QUESTION_MESSAGE);
-        d.setSize(600, 400);
-        d.setVisible(true);
+            }
+        }
+        if (e.getActionCommand() == Actions.b2.name()) {
+            try {
+                desktop.open(new File(pathwyniki));
+            } catch (Exception w) {
+                JOptionPane.showMessageDialog(null, "Blad otwarcia pliku");
+            }
+        }
+        if (e.getActionCommand() == Actions.b3.name()) {
+            try {
+                desktop.open(new File(pathzasady));
+            } catch (Exception w) {
+                JOptionPane.showMessageDialog(null, "Blad otwarcia pliku");
+            }
+        }
+        if (e.getActionCommand() == Actions.b4.name()) {
+            music();
+        }
 
-        if (inputValue != null) {
-            initGame(inputValue);
+        if (e.getActionCommand() == Actions.b5.name()) {
+            try {
+                desktop.open(new File(pathautorzy));
+            } catch (Exception w) {
+                JOptionPane.showMessageDialog(null, "Blad otwarcia pliku");
+            }
+
+        }
+
+
+        if (e.getActionCommand() == Actions.b6.name()) {
+            String[] options = new String[] {"Tak", "Nie"};
+            int d1 = JOptionPane.showOptionDialog(null, "Czy na pewno chcesz zamknąć program?", "Kończenie pracy", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null, options, options[0]);
+            if (d1 == JOptionPane.YES_OPTION) {
+                System.exit(0);
+                if (d1 == JOptionPane.NO_OPTION) {
+                    remove(d1);
+                }
+
+            }
         }
     }
 }
