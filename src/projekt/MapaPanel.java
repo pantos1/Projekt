@@ -45,6 +45,8 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         addKeyListener(this);
         setFocusable(true);
         gracz.startLocationUpdateThread();
+		
+		strzal = new Strzal("img/strzal.png", this);
     }
 
     /**
@@ -68,6 +70,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
             przeciwnicy.get(i).draw(g);
         }
         gracz.draw(g);
+		if(strzal.y<480 && strzal.y>-20){strzal.draw(g);}
     }
 
     @Override
@@ -78,6 +81,10 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         else if (evt.getKeyCode() == KeyEvent.VK_RIGHT){
             gracz.right=true;
         }
+		else if (evt.getKeyCode() == KeyEvent.VK_SPACE) {
+            strzal.spacja = true;
+            Strzal strzal2 = new Strzal("/strzal.png", this);
+        }
     };
 
     @Override
@@ -86,6 +93,9 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
             gracz.left = false;
         } else if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
             gracz.right = false;
+        }
+		else if (evt.getKeyCode() == KeyEvent.VK_SPACE) {
+
         }
     }
     @Override
@@ -152,6 +162,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
             System.exit(0);
         }
         else if (d == JOptionPane.YES_OPTION){
+            frame.remove(this);
             frame.newGame(gracz.getName());
         }
     }
