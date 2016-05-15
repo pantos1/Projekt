@@ -1,0 +1,10 @@
+Gra W³adek Invaders polega na takim kierowaniu swoj¹ postaci¹ i strzelaniem do przeciwników, ¿eby przeprowadziæ bezpiecznie 
+postaæ do morza. Przeciwnicy staraj¹ siê za wszelk¹ cenê to uniemo¿liwiæ. 
+
+Sterowanie
+- strza³ka w lewo - ruch w lewo
+- strza³ka w prawo - ruch w prawo
+- spacja - strza³
+
+Gra koñczy siê w momencie utraty wszystkich punktów ¿ycia przez gracza lub gdy któryœ z przeciwników nie zostanie zestrzelony
+i dojdzie do gracza.  
