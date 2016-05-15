@@ -18,6 +18,22 @@ import sun.audio.*;
  * nasłuchiwania akcji ze strony użytkownika. Klasa ta odpowiada za właściwe menu gry.
  */
 public class MenuPanel extends JPanel implements ActionListener{
+    /*
+    * utworzenie typu enum zawierającego akcje wywoływane po wciśnięciu każdego z przycisków
+    */
+     private enum Actions {
+        b1, b2, b3, b4, b5, b6
+    }
+    /*
+    * Obiekt klasy Desktop, który umożliwi wywołanie pliku tekstowego na ekranie po naciśnięciu odpowiedniego buttona
+    */
+    private Desktop desktop;
+    /*
+    * obiekty, zawierające ścieżki dostępu do odpowiednich plików tekstowych
+    */
+    private String pathwyniki = "txt/wyniki.txt";
+    private String pathzasady = "txt/zasady.txt";
+    private String pathautorzy = "txt/autorzy.txt";
     /**
      * W konstruktorze klasy MenuPanel tworzone są poszczególne panele odpowiadające za wygląd menu gry.
      * @param img - plik ze zdjęciem, które zostanie ustawione jako tło menu
@@ -27,15 +43,6 @@ public class MenuPanel extends JPanel implements ActionListener{
      * Przezroczystość wszystkich paneli ustawiona jest jako false, żebywidoczny był obrazek mający być
      * tłem menu.
      */
-     private enum Actions {
-        b1, b2, b3, b4, b5, b6
-    }
-    
-    private Desktop desktop;
-    private String pathwyniki = "txt/wyniki.txt";
-    private String pathzasady = "txt/zasady.txt";
-    private String pathautorzy = "txt/autorzy.txt";
-    
     public MenuPanel (String img){
         desktop = Desktop.getDesktop();
         
@@ -120,13 +127,11 @@ public class MenuPanel extends JPanel implements ActionListener{
     public void paintComponent(Graphics g){
         g.drawImage(img, 0, 0, null);
     }
+    /*
+    * Obiekt, który jest obrazkiem stanowiącym tło
+    */
     private Image img;
-    /**
-     * Przeciążenie metody actionPerformed umożliwia zdefiniowanie akcji, która nastąpi po naciśnięciu
-     * na przycisk b1 - "Nowa Gra". Wyskakuje wtedy okienko dialogowe z prośbą o podanie imienia gracza,
-     * a po zatwierdzeniu przechodzi do pierwszej planszy gry.
-     * @param e - określa zdarzenie, które nastąpiło
-     */
+ 
         /* public static void music() {
         AudioPlayer MGP = AudioPlayer.player;
         AudioStream BGM;
@@ -140,6 +145,16 @@ public class MenuPanel extends JPanel implements ActionListener{
         MGP.start(loop);
     }
 */
+
+   /**
+     * Przeciążenie metody actionPerformed umożliwia zdefiniowanie akcji, która nastąpi po naciśnięciu
+     * na przycisk b1 - "Nowa Gra". Wyskakuje wtedy okienko dialogowe z prośbą o podanie imienia gracza,
+     * a po zatwierdzeniu przechodzi do pierwszej planszy gry.
+     * Akcje b2, b3 i b5 powodują otwarcie odpowiednich plików tekstowych na ekranie.
+     * Po naciśnięciu na ostatni z buttonów wywołane zostaje okienko z pytaniem czy gracz na pewno chce opuścić grę. 
+     * Wprzypadku odpowiedzi twierdzącej okienko z grą jest wyłączane.
+     * @param e - określa zdarzenie, które nastąpiło
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() == Actions.b1.name()) {
