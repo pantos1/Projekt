@@ -25,6 +25,7 @@ public class Gracz implements Runnable {
         icon = new ImageIcon(fileName);
         hp = 100;
         x = panel.getWidth()/2;
+        y = panel.getHeight()-icon.getIconHeight();
         this.panel = panel;
     }
 
@@ -34,7 +35,7 @@ public class Gracz implements Runnable {
      * @param g Kontekst graficzny.
      */
     void draw(Graphics g) {
-        g.drawImage(icon.getImage(), x, 750, null);
+        g.drawImage(icon.getImage(), x, y, null);
     }
 
     /**
@@ -50,8 +51,11 @@ public class Gracz implements Runnable {
     public String getName() {
         return name;
     }
+    int getX(){return x;}
+    int getY(){return y;}
 
     private int x;
+    private int y;
     private int dx = 10;
     private int xDirection;
 

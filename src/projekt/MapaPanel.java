@@ -45,8 +45,9 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         addKeyListener(this);
         setFocusable(true);
         gracz.startLocationUpdateThread();
-		
-		strzal = new Strzal("img/strzal.png", this);
+
+        strzal = new Strzal("img/strzal.png", this);
+        strzal.startLocationUpdateThread();
     }
 
     /**
@@ -70,20 +71,19 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
             przeciwnicy.get(i).draw(g);
         }
         gracz.draw(g);
-		if(strzal.y<480 && strzal.y>-20){strzal.draw(g);}
+		strzal.draw(g);
     }
 
     @Override
     public void keyPressed(KeyEvent evt){
         if (evt.getKeyCode() == KeyEvent.VK_LEFT){
-            gracz.left=true;
+            gracz.left = true;
         }
         else if (evt.getKeyCode() == KeyEvent.VK_RIGHT){
-            gracz.right=true;
+            gracz.right = true;
         }
 		else if (evt.getKeyCode() == KeyEvent.VK_SPACE) {
-            strzal.spacja = true;
-            Strzal strzal2 = new Strzal("/strzal.png", this);
+            strzal.isVisible = true;
         }
     };
 
@@ -112,7 +112,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
     /**
      * Aktualnie uczestniczący w grze gracz.
      */
-    private Gracz gracz;
+    Gracz gracz;
     /**
      * Obrazek będący tłem mapy.
      */
@@ -123,6 +123,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
     private ArrayList <Przeciwnik> przeciwnicy;
     Thread kicker = null;
     private MapaFrame frame;
+    private Strzal strzal;
 
     @Override
     public void run() {
@@ -139,6 +140,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
     void startAnimationThread(){
         (kicker = new Thread(this)).start();
         gracz.startLocationUpdateThread();
+        strzal.startLocationUpdateThread();
         int i;
         for(i=0;i<przeciwnicy.size();i++){
             przeciwnicy.get(i).startLocationUpdateThread();
@@ -148,6 +150,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
     void stopAnimationThread(){
         kicker = null;
         gracz.stopLocationUpdateThread();
+        strzal.stopLocationUpdateThread();
         int i;
         for(i=0;i<przeciwnicy.size();i++){
             przeciwnicy.get(i).stopLocationUpdateThread();
