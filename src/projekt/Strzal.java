@@ -4,11 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 /**
- * Created by Kuba on 2016-05-14.
- */
-/**
- * Klasa, kt?ra charakteryzuje strza? i okre?la jego parametry.
+ * Klasa, ktora charakteryzuje strzal i okresla jego parametry.
  */
 public class Strzal implements Runnable {
 
@@ -16,13 +14,16 @@ public class Strzal implements Runnable {
      * Konstruktor klasy Strzal
      *
      * @param fileName - Określa ścieżkę do pliku, w którym znajduje się ikona strzału.
+     * @param panel - referencja na obiekt klasy MapaPanel
      */
 
     public Strzal(String fileName, MapaPanel panel) {
         icon = new ImageIcon(fileName);
         this.panel = panel;
     }
-
+/*
+* Pole, które określa czy strzał jest widoczny na mapie
+*/
     public boolean isVisible=false;
 
 
@@ -37,17 +38,38 @@ public class Strzal implements Runnable {
         }
     }
 
+    /**
+     * Obiekt klasy ImageIcon przechowujący ikonę gracza.
+     */
     private ImageIcon icon;
+    /**
+     * Referencja na obiekt klasy MapaPanel, w którym jest tworzony strzał.
+     */
     MapaPanel panel;
+    /**
+     * Pole, które przechowuje położenie x strzału
+     */
     public int x;
+     /**
+     * Pole, które przechowuje położenie y strzału
+     */
     public int y;
+    /**
+     * Pole, które przechowuje prędkość strzału w kierunku y.
+     */
     private int dy = -10;
+     /**
+     * Pole, które przechowuje moc pocisku.
+     */
     private int moc;
-
+    /**
+     * Wątek, dzięki któremu możemy sterować wykonywaniem funkcji <i>run()<i> w klasie.
+     */
     private Thread kicker;
 
     /**
-     * Funkcja, która odpowiada za poruszanie się pocisku.
+     * Funkcja, która odpowiada za poruszanie się pocisku. Jeżeli strzał zostanie wywołany (wciśniemy spację) 
+     * zacznie się on poruszać z miejsca, w którym znajduje się gracz. 
      */
 
     private void move() {
@@ -60,7 +82,9 @@ public class Strzal implements Runnable {
         }
         if(y<0)isVisible=false;
     }
-
+    /**
+     * Przeciążona metoda run() aktualizująca położenie strzału.
+     */
     @Override
     public void run() {
         while (kicker == Thread.currentThread()) {
@@ -72,11 +96,15 @@ public class Strzal implements Runnable {
             }
         }
     }
-
+    /**
+     * Rozpoczyna wątek kicker, co powoduje uruchomienie pętli w funkcji <i>run()</i>.
+     */
     public void startLocationUpdateThread(){
         (kicker = new Thread(this)).start();
     }
-
+    /**
+     * Przypisuje wątkowi kicker wartość null, dzięki czemu zatrzymana jest pętla w funkcji run().
+     */
     public void stopLocationUpdateThread(){
         kicker = null;
     }
