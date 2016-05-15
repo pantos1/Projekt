@@ -31,13 +31,19 @@ public class Przeciwnik implements Runnable{
     void draw(Graphics g){
         g.drawImage(icon.getImage(),x,y,null);
     }
+
+    /**
+     * Funkcja aktualizująca położenie obiektu. Funkcja zmienia wartość kierunku ruchu <i>xDirection</i>
+     * po dojściu do krawędzi obiektu MapaPanel. Wtedy wartość położenia <i>y</i> jest zmieniana o wartość <i>dy</i>.
+     * Po wykryciu dojścia do dolnej krawędzi obiektu MapaPanel, wywoływana jest funkcja gameOver().
+     */
     private void move(){
         if(x<=0){
-            xDirection=1;
+            xDirection = 1;
             y+=dy;
         }
         else if(x+icon.getIconWidth()>panel.getWidth()) {
-            xDirection=-1;
+            xDirection = -1;
             y+=dy;
         }
         x+=xDirection*dx;
@@ -46,6 +52,9 @@ public class Przeciwnik implements Runnable{
         }
     }
 
+    /**
+     * Przeciążona metoda <i>run()</i> aktualizująca położenie przeciwnika.
+     */
     @Override
     public void run() {
         while(kicker == Thread.currentThread()){
@@ -58,10 +67,16 @@ public class Przeciwnik implements Runnable{
         }
     }
 
+    /**
+     * Rozpoczyna wątek kicker, co powoduje uruchomienie pętli w funkcji <i>run()</i>.
+     */
     void startLocationUpdateThread(){
         (kicker = new Thread(this)).start();
     }
 
+    /**
+     * Przypisuje wątkowi kicker wartość null, dzięki czemu zatrzymana jest pętla w funkcji run().
+     */
     void stopLocationUpdateThread(){
         kicker = null;
     }
@@ -78,9 +93,24 @@ public class Przeciwnik implements Runnable{
      * Pole przechowujace obiekt icon klasy ImageIcon zawierającej ikonę obiektu Przeciwnik.
      */
     private ImageIcon icon;
+    /**
+     * Prędkość poruszania się kierunku x.
+     */
     private int dx = 5;
+    /**
+     * Prędkość poruszania się kierunku y.
+     */
     private int dy = 20;
+    /**
+     * Kierunek poruszania się obiektu klasy przeciwnik. 1 - w prawo; -1 - w lewo
+     */
     private int xDirection=1;
+    /**
+     * Referencja na obiekt klasy MapaPanel, w którym jest tworzony przeciwnik.
+     */
     MapaPanel panel;
+    /**
+     * Wątek, dzięki któremu możemy sterować wykonywaniem funkcji <i>run()<i> w klasie.
+     */
     private Thread kicker;
 }

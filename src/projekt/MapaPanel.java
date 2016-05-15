@@ -12,9 +12,11 @@ import java.util.ArrayList;
 public class MapaPanel extends JPanel implements KeyListener, Runnable{
     /**
      * Konstruktor klasy, ładuje obrazek będący tłem mapy. Ustawia wymiary panelu. Tworzy i ustawia napisy z imieniem gracza i
-     * liczbą punktów życia. Tworzy i dodaje do listy liczbę przeciwników zgodną z plikiem konfiguracyjnym.
+     * liczbą punktów życia. Tworzy i dodaje do listy liczbę przeciwników zgodną z plikiem konfiguracyjnym. Tworzy obiekt klasy Strzał,
+     * który jest jednak początkowo niewidoczny.
      * @param mapa Obiekt klasy Mapa która jest obecnie załadowana.
      * @param name Imię gracza do przekazania do konstruktora obiektu klasy Gracz
+     * @param frame Referencja do obiektu klasy MapaFrame, w którym został stoworzony panel.
      */
     public MapaPanel(Mapa mapa, String name, MapaFrame frame){
         this.frame = frame;
@@ -60,7 +62,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
     }
 
     /**
-     * Przeciążona metoda paint, rysująca gracza oraz przeciwników.
+     * Przeciążona metoda paint, rysująca gracza, strzał oraz przeciwników.
      * @param g Kontekst graficzny.
      */
     @Override
@@ -74,6 +76,11 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
 		strzal.draw(g);
     }
 
+    /**
+     * Przeciążona metoda keyPressed, która wychwytuje wciśnięcie przycisków prawej i lewej strzałki oraz spacji,
+     * aby poinformować gracza i strzał o zdarzeniu.
+     * @param evt Zdarzenie wychwycone przez KeyListener.
+     */
     @Override
     public void keyPressed(KeyEvent evt){
         if (evt.getKeyCode() == KeyEvent.VK_LEFT){
@@ -87,6 +94,11 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         }
     };
 
+    /**
+     * Przeciążona metoda keyReleased, która wychwytuje koniec wciśnięcia przycisków prawej i lewej strzałki oraz spacji,
+     * aby poinformować gracza o zdarzeniu.
+     * @param evt Zdarzenie wychwycone przez KeyListener.
+     */
     @Override
     public void keyReleased(KeyEvent evt) {
         if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -98,8 +110,14 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
 
         }
     }
+
+    /**
+     * Przeciążona metoda keyTyped, niewykorzystywana w programie.
+     * @param evt Zdarzenie wychwycone przez KeyListener.
+     */
     @Override
-    public void keyTyped(KeyEvent evt){
+    public void keyTyped(KeyEvent evt) {
+
     }
     /**
      * Obiekt klasy JLabel przechowujący liczbę punktów życia.
@@ -121,10 +139,23 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      * Lista przechowująca wszystkie obiekty klasy Przeciwnik dla danego poziomu.
      */
     private ArrayList <Przeciwnik> przeciwnicy;
+    /**
+     * Wątek, dzięki któremu możemy sterować wykonywaniem funkcji <i>run()<i> w klasie.
+     */
     Thread kicker = null;
+    /**
+     * Referencja na obiekt klasy MapaFrame, który tworzy obiekt tej klasy.
+     */
     private MapaFrame frame;
+    /**
+     * Referencja na obiekt klasy Strzal, który jest rysowany w MapaPanel.
+     */
     private Strzal strzal;
 
+    /**
+     * Przeciążona metoda <i>run()</i> która wywołuje metodę repaint i odpowiada za sterowanie rysowaniem obiektów.
+     * Usypia również wątek.
+     */
     @Override
     public void run() {
         while(kicker == Thread.currentThread()){
@@ -137,6 +168,10 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         }
     }
 
+    /**
+     * Funkcja rozpoczynająca wątek rysowania animacji oraz wywołująca funkcje rozpoczynające wątki aktualizujące
+     * położenie gracza, strzału i przeciwników.
+     */
     void startAnimationThread(){
         (kicker = new Thread(this)).start();
         gracz.startLocationUpdateThread();
@@ -147,6 +182,10 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         }
     }
 
+    /**
+     * Funkcja zatrzymująca wątek rysowania animacji oraz wywołująca funkcje zatrzymujące wątki aktualizujące
+     * położenie gracza, strzału i przeciwników.
+     */
     void stopAnimationThread(){
         kicker = null;
         gracz.stopLocationUpdateThread();
@@ -156,6 +195,11 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
             przeciwnicy.get(i).stopLocationUpdateThread();
         }
     }
+
+    /**
+     * Funkcja wywoływana na koniec gry, zatrzymująca wątek animacji oraz otwierająca okno dialogowe pytające o rozpoczęcie
+     * nowej gry.
+     */
     void gameOver(){
         stopAnimationThread();
         String[] options = new String[] {"Tak", "Nie"};
