@@ -10,7 +10,9 @@ import java.io.IOException;
  */
 public class MapaFrame extends JFrame {
     /**
-     * Konstruktor obiektu klasy MapaFrame. Tworzy ramkę o tytule gry - "Władek Invaders". Tworzy również obiekty klas Mapa, Gracz i MapaPanel.
+     * Konstruktor obiektu klasy MapaFrame. Tworzy ramkę o tytule gry - "Władek Invaders". Nasłuchuje też zdarzeń
+     * związań z minimalizacją okna i zatrzymuje wówczas wątek animacji gry. Wywołuje funkcję newGame odpowiedzialną
+     * za stworzenie nowej gry.
      */
     public MapaFrame(String name){
         super("Władek Invaders");
@@ -29,6 +31,11 @@ public class MapaFrame extends JFrame {
         });
         newGame(name);
     }
+
+    /**
+     * Funkcja tworząca obiekt klasy Mapa na podstawie pliku konfiguracyjnego oraz obiekt klasy MapaPanel, będący planszą gry.
+     * @param name Imię gracza.
+     */
     void newGame(String name){
         Mapa _1 = new Mapa();
         try {
@@ -42,5 +49,8 @@ public class MapaFrame extends JFrame {
         main.startAnimationThread();
     }
 
+    /**
+     * Referencja na obiekt klasy MapaPanel tworzony przez MapaFrame.
+     */
     private MapaPanel main;
 }
