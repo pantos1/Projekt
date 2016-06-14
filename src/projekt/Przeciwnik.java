@@ -29,7 +29,7 @@ public class Przeciwnik implements Runnable{
      * @param g Kontekst graficzny
      */
     void draw(Graphics g){
-        g.drawImage(icon.getImage(),x,y,null);
+        if(isVisible) g.drawImage(icon.getImage(),x,y,null);
     }
 
     /**
@@ -50,6 +50,14 @@ public class Przeciwnik implements Runnable{
         if(y+icon.getIconHeight()>panel.getHeight()){
             panel.gameOver();
         }
+    }
+
+    boolean hasCollided(Strzal strzal){
+        Rectangle me = new Rectangle();
+        Rectangle other = new Rectangle();
+        me.setBounds(x,y,icon.getIconWidth(),icon.getIconHeight());
+        other.setBounds(strzal.x, strzal.y, strzal.icon.getIconWidth(),strzal.icon.getIconHeight());
+        return me.intersects(other);
     }
 
     /**
@@ -113,4 +121,5 @@ public class Przeciwnik implements Runnable{
      * Wątek, dzięki któremu możemy sterować wykonywaniem funkcji <i>run()<i> w klasie.
      */
     private Thread kicker;
+    boolean isVisible = true;
 }

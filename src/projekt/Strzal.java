@@ -2,8 +2,6 @@ package projekt;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 /**
  * Klasa, ktora charakteryzuje strzal i okresla jego parametry.
@@ -20,6 +18,8 @@ public class Strzal implements Runnable {
     public Strzal(String fileName, MapaPanel panel) {
         icon = new ImageIcon(fileName);
         this.panel = panel;
+        x = panel.gracz.getCenter();
+        y = panel.gracz.getY();
     }
 /*
 * Pole, które określa czy strzał jest widoczny na mapie
@@ -41,7 +41,7 @@ public class Strzal implements Runnable {
     /**
      * Obiekt klasy ImageIcon przechowujący ikonę gracza.
      */
-    private ImageIcon icon;
+    ImageIcon icon;
     /**
      * Referencja na obiekt klasy MapaPanel, w którym jest tworzony strzał.
      */
@@ -74,13 +74,12 @@ public class Strzal implements Runnable {
 
     private void move() {
         if(!isVisible) {
-            x = panel.gracz.getX();
+            x = panel.gracz.getCenter();
             y = panel.gracz.getY();
         }
         else{
             y+=dy;
         }
-        if(y<0)isVisible=false;
     }
     /**
      * Przeciążona metoda run() aktualizująca położenie strzału.

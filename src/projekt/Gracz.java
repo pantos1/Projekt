@@ -66,6 +66,14 @@ public class Gracz implements Runnable {
     int getY(){return y;}
 
     /**
+     * Funkcja zwracająca środek ikony gracza w płaszczyźnie x
+     * @return środek ikony gracza w płaszczyźnie x
+     */
+    int getCenter(){
+        return x+(icon.getIconWidth()/2);
+    }
+
+    /**
      * Pole przechowujące położenie x gracza.
      */
     private int x;

@@ -58,10 +58,10 @@ public class MenuPanel extends JPanel implements ActionListener{
 
         add(menu);
         menu.add(emp1);
-        menu.add(title);
+        menu.add(title, BorderLayout.NORTH);
         menu.add(emp2);
         menu.add(emp3);
-        menu.add(but);
+        menu.add(but, BorderLayout.CENTER);
         menu.add(emp4);
 
 
