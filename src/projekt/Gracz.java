@@ -24,6 +24,7 @@ public class Gracz implements Runnable {
     public Gracz(String name, String fileName, MapaPanel panel) {
         this.name = name;
         icon = new ImageIcon(fileName);
+        score=0;
         hp = 100;
         x = panel.getWidth()/2;
         y = panel.getHeight()-icon.getIconHeight();
@@ -111,7 +112,7 @@ public class Gracz implements Runnable {
     /**
      * Pole przechowujące punkty zdobyte przez gracza.
      */
-    private int score;
+    int score;
     /**
      * Pole przechwoujące liczbę punktów życia gracza.
      */

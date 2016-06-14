@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  * Klasa tworząca panel na ktorym będą rysowane obiekty gry - przeciwnicy, gracz, strzał.
@@ -20,7 +23,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      */
     public MapaPanel(Mapa mapa, String name, MapaFrame frame){
         this.frame = frame;
-        img = new ImageIcon(mapa.getBackground()).getImage();
+        img = new ImageIcon(mapa.getString("background")).getImage();
         przeciwnicy = new ArrayList<Przeciwnik>();
         strzaly= new ArrayList<Strzal>();
 
@@ -40,8 +43,16 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         hp.setFont(new Font("Verdana",1,16));
         add(hp, BorderLayout.LINE_START);
 
+        score = new JLabel("Wynik:"+String.valueOf(gracz.score));
+        score.setFont(new Font("Verdana",1,16));
+        add(score, BorderLayout.LINE_START);
+
+        czas = new JLabel(String.valueOf(mapa.getInt("time"))+"s");
+        czas.setFont(new Font("Verdana",1,16));
+        add(czas, BorderLayout.LINE_START);
+
         int i;
-        for(i=0; i<mapa.getNumberOfEnemies(); i++){
+        for(i=0; i<mapa.getInt("numberOfEnemies"); i++){
             przeciwnicy.add(new Przeciwnik("img/janusz.png", this));
             przeciwnicy.get(i).startLocationUpdateThread();
         }
@@ -52,6 +63,17 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
 
         strzaly.add(new Strzal("img/strzal.png", this));
         strzaly.get(0).startLocationUpdateThread();
+
+        timer = new Timer();
+        timerTask = new TimerTask(){
+            int time = mapa.getInt("time");
+            public void run() {
+                czas.setText(String.valueOf(time)+"s");
+                time--;
+                if(time<0) gameOver();
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask,0,1000);
     }
 
     /**
@@ -121,14 +143,18 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
 
     void detectColissions(){
         int i,j;
-        for(i=0;i<przeciwnicy.size();i++){
-            for(j=0;j<strzaly.size();j++){
-                if(przeciwnicy.get(i).hasCollided(strzaly.get(j))) {
-                    kill(przeciwnicy.get(i));
-                    kill(strzaly.get(j));
+        for(i=0;i<przeciwnicy.size();i++)
+            for (j = 0; j < strzaly.size(); j++) {
+                try {
+                    if (przeciwnicy.get(i).hasCollided(strzaly.get(j))) {
+                        kill(przeciwnicy.get(i));
+                        kill(strzaly.get(j));
+                        updateScore();
+                    }
+                }catch(IndexOutOfBoundsException e){
                 }
             }
-        }
+        if(przeciwnicy.isEmpty()) gameOver();
     }
 
     void kill(Przeciwnik przeciwnik){
@@ -140,6 +166,11 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         strzal.isVisible=false;
         strzal.stopLocationUpdateThread();
         strzaly.remove(strzal);
+
+    }
+    void updateScore(){
+        gracz.score++;
+        score.setText("Wynik:"+gracz.score);
     }
     /**
      * Obiekt klasy JLabel przechowujący liczbę punktów życia.
@@ -149,6 +180,14 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      * Obiekt klasy JLabel przechowujący imię gracza.
      */
     private JLabel imie;
+    /**
+     * Obiekt klasy JLabel wyświetlający aktualny wynik gracza.
+     */
+    private JLabel score;
+    /**
+     * Obiekt klasy JLabel wyświetlający czas pozostały do ukończenia gry.
+     */
+    private JLabel czas;
     /**
      * Aktualnie uczestniczący w grze gracz.
      */
@@ -173,7 +212,8 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      * Referencja na obiekt klasy Strzal, który jest rysowany w MapaPanel.
      */
     private ArrayList <Strzal> strzaly;
-
+    private Timer timer;
+    private TimerTask timerTask;
     /**
      * Przeciążona metoda <i>run()</i> która wywołuje metodę repaint i odpowiada za sterowanie rysowaniem obiektów.
      * Usypia również wątek.
@@ -221,6 +261,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         for(i=0;i<strzaly.size();i++){
             strzaly.get(i).stopLocationUpdateThread();
         }
+
     }
 
     /**

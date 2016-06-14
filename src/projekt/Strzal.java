@@ -77,9 +77,8 @@ public class Strzal implements Runnable {
             x = panel.gracz.getCenter();
             y = panel.gracz.getY();
         }
-        else{
-            y+=dy;
-        }
+        else y+=dy;
+        if(y<0) panel.kill(this);
     }
     /**
      * Przeciążona metoda run() aktualizująca położenie strzału.

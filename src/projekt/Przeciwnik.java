@@ -47,7 +47,7 @@ public class Przeciwnik implements Runnable{
             y+=dy;
         }
         x+=xDirection*dx;
-        if(y+icon.getIconHeight()>panel.getHeight()){
+        if(y+icon.getIconHeight()>panel.gracz.getY()){
             panel.gameOver();
         }
     }
