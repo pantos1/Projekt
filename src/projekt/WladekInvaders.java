@@ -9,7 +9,7 @@ import java.awt.EventQueue;
  * Klasa, która inicjalizuje menu główne gry. W nowym wątku tworzony jest nowy obiekt klasy
  * MenuFrame
  */
-public class WładekInvaders {
+public class WladekInvaders {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

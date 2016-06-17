@@ -116,7 +116,7 @@ public class Gracz implements Runnable {
     /**
      * Pole przechwoujące liczbę punktów życia gracza.
      */
-    private int hp;
+    int hp;
 
     /**
      * Zmienna używana do określenia czy ma być wykonywany ruch w lewą stronę.
@@ -155,6 +155,18 @@ public class Gracz implements Runnable {
                 ie.printStackTrace();
             }
         }
+    }
+    /**
+     * Funkcja, która określa czy doszło do kolizji między postacią sterowaną przez gracza i pociskiem wystrzelonym przez przeciwnika.
+     * @param strzalp - referencja na obiekt typu Strzalp, z którym sprawdzamy czy zaszła kolizja.
+     * @return
+     */
+    boolean hasCollided(StrzalPrzeciwnik strzalp){
+        Rectangle me = new Rectangle();
+        Rectangle other = new Rectangle();
+        me.setBounds(x,y,icon.getIconWidth(),icon.getIconHeight());
+        other.setBounds(strzalp.x, strzalp.y, strzalp.icon.getIconWidth(),strzalp.icon.getIconHeight());
+        return me.intersects(other);
     }
 
     /**

@@ -122,4 +122,19 @@ public class Przeciwnik implements Runnable{
      */
     private Thread kicker;
     boolean isVisible = true;
+	StrzalPrzeciwnik strzalp;
+	 /**
+     * Funkcja zwracająca położenie y przeciwnika, jego dolnej krawędzi.
+     * @return Współrzędna y przeciwnika.
+     */
+	int getY(){
+        return y+icon.getIconHeight();
+    }
+    /**
+     * Funkcja zwracająca środek ikony gracza w płaszczyźnie x
+     * @return środek ikony gracza w płaszczyźnie x
+     */
+    int getCenter(){
+        return x+(icon.getIconWidth()/2);
+    }
 }

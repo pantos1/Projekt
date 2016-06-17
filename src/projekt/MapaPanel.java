@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,11 +22,13 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      * @param name Imię gracza do przekazania do konstruktora obiektu klasy Gracz
      * @param frame Referencja do obiektu klasy MapaFrame, w którym został stoworzony panel.
      */
-    public MapaPanel(Mapa mapa, String name, MapaFrame frame){
+    public MapaPanel(Mapa mapa, String name, MapaFrame frame, Klient klient, String sciezka){
         this.frame = frame;
-        img = new ImageIcon(mapa.getString("background")).getImage();
+        this.klient = klient;
+        img = new ImageIcon(mapa.getProperty("background")).getImage();
         przeciwnicy = new ArrayList<Przeciwnik>();
         strzaly= new ArrayList<Strzal>();
+		strzalyprzeciwnik = new ArrayList<StrzalPrzeciwnik>();
 
         Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
         setPreferredSize(size);
@@ -33,7 +36,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         setMaximumSize(size);
         setSize(size);
 
-        gracz = new Gracz(name, "img/gracz.png", this);
+        gracz = new Gracz(name, sciezka, this);
 
         imie = new JLabel(name);
         imie.setFont(new Font("Verdana",1,16));
@@ -47,26 +50,29 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         score.setFont(new Font("Verdana",1,16));
         add(score, BorderLayout.LINE_START);
 
-        czas = new JLabel(String.valueOf(mapa.getInt("time"))+"s");
+        czas = new JLabel(String.valueOf(mapa.getProperty("time"))+"s");
         czas.setFont(new Font("Verdana",1,16));
         add(czas, BorderLayout.LINE_START);
 
         int i;
-        for(i=0; i<mapa.getInt("numberOfEnemies"); i++){
+        for(i=0; i<Integer.parseInt(mapa.getProperty("numberOfEnemies")); i++){
             przeciwnicy.add(new Przeciwnik("img/janusz.png", this));
             przeciwnicy.get(i).startLocationUpdateThread();
+			strzalyprzeciwnik.add(new StrzalPrzeciwnik("img/klapek.png", this, przeciwnicy.get(i)));
+            strzalyprzeciwnik.get(i).startLocationUpdateThread();
+            przeciwnicy.get(i).strzalp = strzalyprzeciwnik.get(i);
         }
 
         addKeyListener(this);
         setFocusable(true);
         gracz.startLocationUpdateThread();
 
-        strzaly.add(new Strzal("img/strzal.png", this));
+        strzaly.add(new Strzal("img/klapek2.png", this, gracz));
         strzaly.get(0).startLocationUpdateThread();
 
         timer = new Timer();
         timerTask = new TimerTask(){
-            int time = mapa.getInt("time");
+            int time = Integer.parseInt(mapa.getProperty("time"));
             public void run() {
                 czas.setText(String.valueOf(time)+"s");
                 time--;
@@ -92,6 +98,9 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         for(j=0;j<strzaly.size();j++){
             strzaly.get(j).draw(g);
         }
+		for(j=0;j<strzalyprzeciwnik.size();j++){
+        strzalyprzeciwnik.get(j).draw(g);
+        }
     }
 
     /**
@@ -108,7 +117,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
             gracz.right = true;
         }
 		else if (evt.getKeyCode() == KeyEvent.VK_SPACE) {
-            Strzal strzal = new Strzal("img/strzal.png", this);
+            Strzal strzal = new Strzal("img/klapek2.png", this, gracz);
             strzaly.add(strzal);
             strzal.startLocationUpdateThread();
             strzal.isVisible=true;
@@ -152,25 +161,67 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
                         updateScore();
                     }
                 }catch(IndexOutOfBoundsException e){
+                }catch (NullPointerException e) {
+
                 }
             }
-        if(przeciwnicy.isEmpty()) gameOver();
-    }
+        if(przeciwnicy.isEmpty()) nextLevel();
+		for (j = 0; j < strzalyprzeciwnik.size(); j++) {
+            try {
+                if (gracz.hasCollided(strzalyprzeciwnik.get(j))) {
+                    strzalyprzeciwnik.get(j).reset();
+                    strzalyprzeciwnik.get(j).isVisible=false;
+                    updateHP();
+                    if(gracz.hp<=0) gameOver();
+                }
+            }catch(IndexOutOfBoundsException e){
+            }catch (NullPointerException e){
 
+            }
+	}
+	}
+    /**
+     * Funkcja, która usuwa przeciwnika.
+     * @param przeciwnik - referencja na obiekt klasy Przeciwnik
+     */
     void kill(Przeciwnik przeciwnik){
         przeciwnik.isVisible=false;
         przeciwnik.stopLocationUpdateThread();
         przeciwnicy.remove(przeciwnik);
     }
+	/**
+     * Funkcja, która usuwa strzał gracza.
+     * @param strzal - referencja na obiekt klasy Strzal
+     */
     void kill(Strzal strzal){
         strzal.isVisible=false;
         strzal.stopLocationUpdateThread();
         strzaly.remove(strzal);
 
     }
+	/**
+     * Funkcja, która usuwa strzał przeciwnika.
+     * @param strzalp - referencja na obiekt klasy Strzalp
+     */
+    void kill(StrzalPrzeciwnik strzalp){
+        strzalp.isVisible=false;
+        strzalp.stopLocationUpdateThread();
+        strzalyprzeciwnik.remove(strzalp);
+
+    }
+	/**
+     * Funkcja odpowiadająca za odświeżanie wyniku osiagniętego przez gracza. Uruchamia się po każdym trafieniu przeciwnika.
+     */
     void updateScore(){
         gracz.score++;
         score.setText("Wynik:"+gracz.score);
+    }
+    /**
+     * Funkcja odpowiadająca za odświeżanie poziomu życia gracza. Uruchamia się po każdym trafieniu pociskiem od Przeciwnika.
+     */
+    void updateHP(){
+        gracz.hp-=10;
+        hp.setText("HP:"+gracz.hp);
     }
     /**
      * Obiekt klasy JLabel przechowujący liczbę punktów życia.
@@ -208,10 +259,12 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      * Referencja na obiekt klasy MapaFrame, który tworzy obiekt tej klasy.
      */
     private MapaFrame frame;
+    private Klient klient;
     /**
      * Referencja na obiekt klasy Strzal, który jest rysowany w MapaPanel.
      */
     private ArrayList <Strzal> strzaly;
+	private ArrayList <StrzalPrzeciwnik> strzalyprzeciwnik;
     private Timer timer;
     private TimerTask timerTask;
     /**
@@ -245,6 +298,11 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         for(i=0;i<strzaly.size();i++){
             strzaly.get(i).startLocationUpdateThread();
         }
+        try {
+            timer.scheduleAtFixedRate(timerTask, 0, 1000);
+        }catch (IllegalStateException e){
+
+        }
     }
 
     /**
@@ -261,7 +319,7 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
         for(i=0;i<strzaly.size();i++){
             strzaly.get(i).stopLocationUpdateThread();
         }
-
+        timer.cancel();
     }
 
     /**
@@ -270,15 +328,45 @@ public class MapaPanel extends JPanel implements KeyListener, Runnable{
      */
     void gameOver(){
         stopAnimationThread();
+        timer.cancel();
         String[] options = new String[] {"Tak", "Nie"};
         int d = JOptionPane.showOptionDialog(this, "Czy chcesz zagrać jeszcze raz?", "Koniec gry",
                 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
         if (d == JOptionPane.NO_OPTION){
-            System.exit(0);
+            frame.dispose();
         }
         else if (d == JOptionPane.YES_OPTION){
             frame.remove(this);
-            frame.newGame(gracz.getName());
+            frame.newGame(gracz.getName(),klient);
+        }
+    }
+
+    /**
+     * Metoda wywoływana po pomyślnym zakończeniu gry. Przekazuje za pomocą obiektu klasy Klient wynik z rozgrywki do serwera
+     * oraz wyświetla informację o najlepszych wynikach.
+     */
+    void nextLevel(){
+        stopAnimationThread();
+        timer.cancel();
+        timerTask.cancel();
+        int wynik = gracz.score+Integer.parseInt(czas.getText().replace("s",""));
+        klient.sendScore(gracz.getName(),wynik);
+
+        try {
+            Desktop desktop=Desktop.getDesktop();
+            desktop.open(new File("txt/wyniki.txt"));
+        } catch (Exception w) {
+        }
+
+        String[] options = new String[] {"Tak", "Nie"};
+        int d = JOptionPane.showOptionDialog(this, "Czy chcesz zagrać jeszcze raz?", "Koniec gry",
+                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, null);
+        if (d == JOptionPane.NO_OPTION){
+            frame.dispose();
+        }
+        else if (d == JOptionPane.YES_OPTION){
+            frame.remove(this);
+            frame.newGame(gracz.getName(),klient);
         }
     }
 }

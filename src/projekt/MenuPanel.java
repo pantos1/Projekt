@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+
 import sun.audio.*;
 
 /**
@@ -29,11 +31,21 @@ public class MenuPanel extends JPanel implements ActionListener{
     */
     private Desktop desktop;
     /*
-    * obiekty, zawierające ścieżki dostępu do odpowiednich plików tekstowych
+    * obiekt zawierający ścieżkę dostępu do pliku z wynikami.
     */
-    private String pathwyniki = "txt/wyniki.txt";
-    private String pathzasady = "txt/zasady.txt";
-    private String pathautorzy = "txt/autorzy.txt";
+    private static String pathwyniki = "txt/wyniki.txt";
+    /*
+    * obiekt zawierający ścieżkę dostępu do pliku z zasadami gry.
+    */
+    private static String pathzasady = "txt/zasady.txt";
+    /*
+    * obiekt zawierający ścieżkę dostępu do pliku z autorami gry.
+    */
+    private static String pathautorzy = "txt/autorzy.txt";
+    /*
+    * obiekt zawierający ścieżkę dostępu do pliku z ikoną gracza.
+    */
+    private String sciezka="img/boy.png";
     /**
      * W konstruktorze klasy MenuPanel tworzone są poszczególne panele odpowiadające za wygląd menu gry.
      * @param img - plik ze zdjęciem, które zostanie ustawione jako tło menu
@@ -105,16 +117,21 @@ public class MenuPanel extends JPanel implements ActionListener{
         emp4.setOpaque(false);
         title.setOpaque(false);
 
+        try {
+            klient = new Klient(InetAddress.getLocalHost(), 9877);
+        } catch (Exception e) {
+            System.err.println("Błąd połączenia z serwerem");
+        }
     }
     /**
      * Funkcja inicjalizującą grę, tworzy nowy wątek. W tym wątku tworzy obiekt klasy Mapa na podstawie pliku konfiguracyjnego oraz
      * obiekt klasy Gracz na podstawie podanego imienia. Tworzy również okno gry, tworząc obiekty klasy MapaFrame.
      */
-    protected void initGame(String name) {
+    protected void initGame(String name, Klient klient, String sciezka) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                MapaFrame frame = new MapaFrame(name);
+                MapaFrame frame = new MapaFrame(name, klient, sciezka);
                 frame.setVisible(true);
                 }
         });
@@ -127,24 +144,15 @@ public class MenuPanel extends JPanel implements ActionListener{
     public void paintComponent(Graphics g){
         g.drawImage(img, 0, 0, null);
     }
-    /*
+
+    /**
+     * Referencja na obiekt typu klient za pomocą którego porozumiewamy się z serwerem.
+     */
+    Klient klient;
+    /**
     * Obiekt, który jest obrazkiem stanowiącym tło
     */
     private Image img;
- 
-        /* public static void music() {
-        AudioPlayer MGP = AudioPlayer.player;
-        AudioStream BGM;
-        AudioData MD;
-        ContinuousAudioDataStream loop = null;
-        try {
-            BGM = new AudioStream(new FileInputStream("C:\\Users\\Kuba\\IdeaProjects\\Projekt_PROZE\\audio2.wav"));
-        MD = BGM.getData();
-            loop = new ContinuousAudioDataStream(MD);
-        }catch(IOException error){JOptionPane.showMessageDialog(null, "Blad otwarcia pliku");}
-        MGP.start(loop);
-    }
-*/
 
    /**
      * Przeciążenie metody actionPerformed umożliwia zdefiniowanie akcji, która nastąpi po naciśnięciu
@@ -163,11 +171,12 @@ public class MenuPanel extends JPanel implements ActionListener{
             d.setSize(300, 200);
             d.setVisible(true);
             if (inputValue != null) {
-                initGame(inputValue);
+                initGame(inputValue, klient, sciezka);
             }
         }
         if (e.getActionCommand() == Actions.b2.name()) {
             try {
+                klient.sendHighScores();
                 desktop.open(new File(pathwyniki));
             } catch (Exception w) {
                 JOptionPane.showMessageDialog(null, "Blad otwarcia pliku");
@@ -181,7 +190,15 @@ public class MenuPanel extends JPanel implements ActionListener{
             }
         }
         if (e.getActionCommand() == Actions.b4.name()) {
-            //music();
+            String[] options = new String[] {"Mężczyzna", "Kobieta"};
+            int d1 = JOptionPane.showOptionDialog(null, "Wybierz swoją płeć!", "Wybór płci", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null, options, options[0]);
+            if (d1 == JOptionPane.YES_OPTION) {
+              sciezka = "img/boy.png";
+            }
+            else if (d1 == JOptionPane.NO_OPTION) {
+                sciezka = "img/girl.png";
+            }
         }
 
         if (e.getActionCommand() == Actions.b5.name()) {
@@ -199,7 +216,11 @@ public class MenuPanel extends JPanel implements ActionListener{
             int d1 = JOptionPane.showOptionDialog(null, "Czy na pewno chcesz zamknąć program?", "Kończenie pracy", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                     null, options, options[0]);
             if (d1 == JOptionPane.YES_OPTION) {
-                System.exit(0);
+                try {
+                    klient.send(Protocol.LOGOUT);
+                }catch(NullPointerException ex){
+
+                }
             }
             else if (d1 == JOptionPane.NO_OPTION) {
             }
